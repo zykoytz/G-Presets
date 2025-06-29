@@ -11,6 +11,7 @@ import extension.tools.presetconfig.furni.PresetFurni;
 import extension.tools.presetconfig.wired.*;
 import extension.tools.presetconfig.wired.incoming.*;
 import furnidata.FurniDataTools;
+import furnidata.details.FloorItemDetails;
 import game.FloorState;
 import gearth.extensions.parsers.HFloorItem;
 import gearth.extensions.parsers.HPoint;
@@ -346,8 +347,15 @@ public class GPresetExporter {
                     for (HFloorItem f : items) {
                         String classname = furniDataTools.getFloorItemName(f.getTypeId());
 
+                        // Get mobi identifier from furnidata
+                        String mobi = null;
+                        FloorItemDetails details = furniDataTools.getFloorItemDetails(classname);
+                        if (details != null) {
+                            mobi = details.getMobi();
+                        }
+
                         PresetFurni presetFurni = new PresetFurni(f.getId(), classname, f.getTile(),
-                                f.getFacing().ordinal(), StateExtractor.stateFromItem(f));
+                                f.getFacing().ordinal(), StateExtractor.stateFromItem(f), mobi);
                         allFurni.add(presetFurni);
 
                         if (classname.equals("ads_background") && f.getStuff() instanceof MapStuffData) {
@@ -484,7 +492,7 @@ public class GPresetExporter {
             extension.updateInstalledPresets();
 
             extension.sendVisualChatInfo(String.format(String.format("Exported \"%s\" successfully", name), name));
-            extension.getLogger().log(String.format("Exported preset \"%s\" successfully", name), "green");
+            extension.getLogger().log(String.format("Exported preset \"%s\" successfully with mobi identifiers", name), "green");
         }
         else {
             extension.sendVisualChatInfo("ERROR - Couldn't export due to unsufficient resources");

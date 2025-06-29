@@ -13,6 +13,7 @@ public class PresetFurni implements PresetJsonConfigurable {
     private String state;    // only if category = legacystuffdata (0), only apply if UseFurniture packet works
 
     private String furniName = null; // uniquely given name by GPresets, based on furniId and className
+    private String mobi = null; // furniture identifier from furnidata for enhanced identification
 
     public PresetFurni(int furniId, String className, HPoint location, int rotation, String state) {
         this.furniId = furniId;
@@ -20,6 +21,15 @@ public class PresetFurni implements PresetJsonConfigurable {
         this.location = location;
         this.rotation = rotation;
         this.state = state;
+    }
+
+    public PresetFurni(int furniId, String className, HPoint location, int rotation, String state, String mobi) {
+        this.furniId = furniId;
+        this.className = className;
+        this.location = location;
+        this.rotation = rotation;
+        this.state = state;
+        this.mobi = mobi;
     }
 
     // deep copy constructor
@@ -34,6 +44,7 @@ public class PresetFurni implements PresetJsonConfigurable {
         this.rotation = furni.rotation;
         this.state = furni.state;
         this.furniName = furni.furniName;
+        this.mobi = furni.mobi;
     }
 
     public PresetFurni(JSONObject jsonObject) {
@@ -48,6 +59,7 @@ public class PresetFurni implements PresetJsonConfigurable {
         this.rotation = jsonObject.getInt("rotation");
         this.state = jsonObject.has("state") ? jsonObject.getString("state") : null;
         this.furniName = jsonObject.getString("name"); // required when parsing from jsonobject
+        this.mobi = jsonObject.has("mobi") ? jsonObject.getString("mobi") : null; // backward compatibility
     }
 
     @Override
@@ -68,9 +80,11 @@ public class PresetFurni implements PresetJsonConfigurable {
             object.put("state", state);
         }
 
-//        if (furniName != null) {
-            object.put("name", furniName); // required when exporting to json object
-//        }
+        object.put("name", furniName); // required when exporting to json object
+
+        if (mobi != null) {
+            object.put("mobi", mobi);
+        }
 
         return object;
     }
@@ -99,7 +113,6 @@ public class PresetFurni implements PresetJsonConfigurable {
         this.rotation = rotation;
     }
 
-
     public String getState() {
         return state;
     }
@@ -122,5 +135,13 @@ public class PresetFurni implements PresetJsonConfigurable {
 
     public String getFurniName() {
         return furniName;
+    }
+
+    public String getMobi() {
+        return mobi;
+    }
+
+    public void setMobi(String mobi) {
+        this.mobi = mobi;
     }
 }

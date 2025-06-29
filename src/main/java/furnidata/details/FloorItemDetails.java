@@ -13,6 +13,7 @@ public class FloorItemDetails extends FurniDetails {
     public final int xDim, yDim, defaultDir, specialType, bcOfferId;
     public final boolean canStandOn, canSitOn, canLayOn;
     public final List<String> partColors;
+    public final String mobi; // furniture identifier for enhanced identification
 
     public FloorItemDetails(JSONObject jsonObject) {
         super(jsonObject);
@@ -39,6 +40,20 @@ public class FloorItemDetails extends FurniDetails {
                             .map(o -> (String) o)
                             .collect(Collectors.toList())
                 ) : null;
+
+        // Extract mobi identifier - prefer name, fallback to className, then id
+        String mobiValue = null;
+        if (jsonObject.has("name") && !jsonObject.getString("name").isEmpty()) {
+            mobiValue = jsonObject.getString("name");
+        } else if (jsonObject.has("classname") && !jsonObject.getString("classname").isEmpty()) {
+            mobiValue = jsonObject.getString("classname");
+        } else {
+            mobiValue = String.valueOf(jsonObject.getInt("id"));
+        }
+        this.mobi = mobiValue;
     }
 
+    public String getMobi() {
+        return mobi;
+    }
 }
